@@ -3,20 +3,25 @@ CC=g++
 CFLAGS=-c -Wall
 LDFLAGS=
 SOURCES=main.cpp
-OBJECTS=$(SOURCES:.cpp=.o)
 BUILD_DIR=bin/native/
 OBJ_DIR=obj/
 EXECUTABLE=$(BUILD_DIR)$(TARGET)
+OBJECTS = $(patsubst %.cpp,$(OBJ_DIR)%.o,$(SOURCES))
 
 #emscripten
 EMCC=em++
-EMCC_OBJECTS=$(SOURCES:.cpp=.em.o)
+EMCC_OBJECTS = $(patsubst %.cpp,$(OBJ_DIR)%.em.o,$(SOURCES))
 EMCC_FLAGS= -s SAFE_HEAP=1
 EMCC_BUILD_DIR=bin/emscripten/
 EMSCRIPTEN_EXECUTABLE=$(EMCC_BUILD_DIR)$(TARGET).html
 
+dummy: all
 
-all: $(SOURCES) $(EXECUTABLE) $(EMSCRIPTEN_EXECUTABLE)
+all: clean $(SOURCES) $(EXECUTABLE) $(EMSCRIPTEN_EXECUTABLE)
+
+clean:
+	rm -fr $(OBJ_DIR)
+	rm -fr bin
 
 $(EMSCRIPTEN_EXECUTABLE): $(EMCC_OBJECTS)
 	mkdir -p $(EMCC_BUILD_DIR)
@@ -26,10 +31,14 @@ $(EXECUTABLE): $(OBJECTS)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
-%.em.o: %.cpp
+$(OBJ_DIR)%.em.o: %.cpp $(OBJ_DIR)
 	$(EMCC) $(CFLAGS) $< -o $@
 
-%.o: %.cpp
+$(OBJ_DIR):
+	mkdir -p $@
+
+$(OBJ_DIR)%.o: %.cpp
+	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) $< -o $@
 
 
