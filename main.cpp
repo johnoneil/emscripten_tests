@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <iostream>
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#endif
 
 struct VS {
   int _1;
