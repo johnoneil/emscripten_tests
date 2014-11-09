@@ -20,7 +20,7 @@ EMCC_FLAGS+= -I$(EMSCRIPTEN)/system/include/emscripten/
 
 dummy: all
 
-all: clean $(SOURCES) $(EXECUTABLE) $(EMSCRIPTEN_EXECUTABLE)
+all: $(SOURCES) $(EXECUTABLE) $(EMSCRIPTEN_EXECUTABLE)
 
 clean:
 	rm -fr $(OBJ_DIR)
